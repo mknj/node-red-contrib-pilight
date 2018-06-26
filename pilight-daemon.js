@@ -17,7 +17,7 @@ module.exports = function(RED) {
       action: "identify",
       options: {
         config: 1,
-        receiver: 0
+        receiver: 1
       }
     });
 
