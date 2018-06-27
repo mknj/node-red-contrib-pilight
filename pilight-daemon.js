@@ -7,14 +7,17 @@ module.exports = function(RED) {
     this.host = n.host;
     this.port = n.port;
     this.socket = new net.Socket();
+    this.reconnect=true
     var node = this;
 
     node.on('close', function() {
+      this.reconnect=false
       node.socket.end();
     });
-
     function connect() {
-      node.socket.connect(node.port, node.host);
+      if(this.reconnect) {
+        node.socket.connect(node.port, node.host);
+      }
     }
 
     var welcomeMessage = JSON.stringify({
@@ -30,6 +33,7 @@ module.exports = function(RED) {
     });
 
     node.socket.on('end', function() {
+      setTimeout(connect,2*1000) // retry every 2 seconds
       node.log('socket connection: closed');
     });
     node.socket.on('error', function() {
