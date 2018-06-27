@@ -13,6 +13,10 @@ module.exports = function(RED) {
       node.socket.end();
     });
 
+    function connect() {
+      node.socket.connect(node.port, node.host);
+    }
+
     var welcomeMessage = JSON.stringify({
       action: "identify",
       options: {
@@ -28,8 +32,10 @@ module.exports = function(RED) {
     node.socket.on('end', function() {
       node.log('socket connection: closed');
     });
-
-    node.socket.connect(node.port, node.host);
+    node.socket.on('error', function() {
+      setTimeout(connect,2*1000) // retry every 2 seconds
+    });
+    connect();
   }
   RED.nodes.registerType("pilight-daemon", PilightDaemonNode);
 }
