@@ -11,11 +11,11 @@ module.exports = function(RED) {
     var node = this;
 
     node.on('close', function() {
-      this.reconnect=false
+      node.reconnect=false
       node.socket.end();
     });
     function connect() {
-      if(this.reconnect) {
+      if(node.reconnect) {
         node.socket.connect(node.port, node.host);
       }
     }
